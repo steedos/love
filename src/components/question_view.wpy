@@ -1,0 +1,180 @@
+<style lang="less">
+  page{
+    background-color: #FFFFFF;
+  }
+
+  .question{
+
+    @height: 40px;
+    @radius: 4px;
+
+    .name{
+      padding-left:15px;
+      padding-right:15px;
+    }
+
+    .weui-footer__text{
+      font-size: 14px;
+    }
+
+    .my-answer{
+      .answer-text{
+        min-width: 50px;
+        text-align: center;
+        position: relative;
+        line-height: @height;
+        padding-left: 10px;
+        padding-right: 10px;
+        margin-right: 15px;
+        color: #FFFFFF;
+        background-color: rgba(2, 20, 255, 0.79);
+        border-radius: @radius;
+      }
+
+      .trianglel{
+        position: absolute;
+        right: -25px;
+        top: 25px;
+        width:0;
+        height:0;
+        border-top:10px solid transparent;
+        border-right:10px solid transparent;
+        border-left:15px solid rgba(2, 20, 255, 0.79);
+        z-index: 999;
+      }
+    }
+
+    .question-section{
+      position: absolute;
+      bottom: 15%;
+    }
+
+    .question-body{
+      position: relative;
+      margin-bottom: 15px;
+      padding-left:15px;
+      padding-right:15px;
+      .weui-cells{
+        background-color: rgba(2, 20, 255, 0.79);
+        color: #FFFFFF;
+        border-radius: @radius;
+      }
+
+      .weui-cell_link{
+        color: #e1e1e1;
+      }
+    }
+
+    .avatar{
+      width:@height;
+      height:@height;
+      border-radius:20px;
+    }
+
+    .you{
+      line-height: @height;
+      padding-right: 10px;
+    }
+
+    .triangleb{
+      position: absolute;
+      right: 30px;
+      top: -9px;
+      width:0;
+      height:0;
+      border-right:10px solid transparent;
+      border-bottom:10px solid rgba(2, 20, 255, 0.79);
+      border-left:10px solid transparent;
+      z-index: 999;
+    }
+
+    .user-you{
+      margin-bottom:15px;
+    }
+  }
+
+</style>
+
+<template>
+  <view class="page question">
+    <view class="name">
+      <view class="page__title">{{question.name}}</view>
+      <!--<view class="page__desc"></view>-->
+    </view>
+
+    <view class="my-answer" wx:if="{{answer.y}}">
+      <view class="weui-cell__ft weui-cells__title weui-flex">
+        <view class="weui-flex__item"></view>
+        <view class="answer-text">
+          {{answer.y.label}}
+          <view class="trianglel"></view>
+        </view>
+        <image class="avatar" src="https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTLdPnqaKu1jtYB3xbJHAia4uUMX3ibxxqZJYZzGEJ0RleibCA3icNJLM6KKOqsFcmebgoLd0ib21Z7RVbw/132"></image>
+      </view>
+    </view>
+
+    <view class="question-section" wx:else>
+      <view class="weui-cell__ft weui-cells__title weui-flex user-you">
+        <view class="weui-flex__item you">YOU</view>
+        <image class="avatar" src="https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTLdPnqaKu1jtYB3xbJHAia4uUMX3ibxxqZJYZzGEJ0RleibCA3icNJLM6KKOqsFcmebgoLd0ib21Z7RVbw/132"></image>
+      </view>
+      <view class="question-body">
+        <view class="triangleb"></view>
+        <view class="weui-cells weui-cells_after-title">
+          <radio-group bindchange="radioChange">
+            <repeat for="{{question.options}}" key="index" index="index" item="option">
+              <label class="weui-cell">
+                <radio class="weui-check" value="{{option.value}}" checked="{{option.value === answer.y.value}}"/>
+                <view class="weui-cell__bd">{{option.label}}</view>
+                <view class="weui-cell__ft weui-cell__ft_in-radio">
+                  <icon class="weui-icon-checkbox_circle" type="circle" size="23" wx:if="{{option.value != answer.y.value}}"></icon>
+                  <icon class="weui-icon-checkbox_success" type="success" size="23" wx:if="{{option.value === answer.y.value}}"></icon>
+                </view>
+              </label>
+            </repeat>
+          </radio-group>
+          <view class="weui-cell weui-cell_link" wx:if="{{question.options.length > 5}}">
+            <view class="weui-cell__bd">添加更多</view>
+          </view>
+        </view>
+      </view>
+      <view class="weui-footer">
+        <view class="weui-footer__text">跳过</view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  export default class QuestionView extends wepy.component {
+    data = {
+      question: {
+        name: 'Are you OK ?',
+        options: [
+          {label: 'YES', value: '0'},
+          {label: 'NO', value: '1'},
+          {label: 'hen qi guai shuo bu shang lai', value: '2'}
+        ]
+      },
+      answer: {
+        y: '',
+        h: ''
+      }
+    };
+
+    methods = {
+      radioChange: function (e) {
+        console.log('radio发生change事件，携带value值为：', e.detail.value);
+        const radioItems = this.question.options;
+        for (let i = 0, len = radioItems.length; i < len; ++i) {
+          console.log('radioItems[i].value', radioItems[i].value);
+          if(radioItems[i].value === e.detail.value){
+            this.answer.y = radioItems[i]
+          }
+        }
+        this.$apply();
+      },
+    }
+  }
+</script>
